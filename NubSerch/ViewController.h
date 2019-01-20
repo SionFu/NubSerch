@@ -27,6 +27,7 @@
 @property (weak) IBOutlet NSTextField *nubOfData;
 //是否值显示手机号码内容
 @property (weak) IBOutlet NSButton *phoneNubOnly;
+@property (weak) IBOutlet NSPopUpButton *apiTypeSelect;
 
 @end
 

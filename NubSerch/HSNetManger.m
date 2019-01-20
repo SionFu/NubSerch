@@ -14,7 +14,7 @@
 #import "HSDataManger.h"
 @implementation HSNetManger
 -(void)getDataWithLocalWord:(NSString *)localWord andKeyWord:(NSString *)keyWord andPage:(NSInteger)page  {
-    NSString *url = [NSString stringWithFormat:@"%@&keywords=%@&city=%@&output=json&offset=40&page=%ld&key=%@&extensions=all",SITEURL,keyWord,localWord, (long)page, KEY];
+    NSString *url = [NSString stringWithFormat:@"%@keywords=%@&city=%@&output=json&offset=40&page=%ld&key=%@&extensions=all",SITEURL,keyWord,localWord, (long)page, KEY];
     NSString * encodedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes( kCFAllocatorDefault, (CFStringRef)url, NULL, NULL,  kCFStringEncodingUTF8 ));
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
     [manger GET:encodedString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -24,6 +24,19 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [self.getDataDelegate getDataFaild];
     }];
+}
+-(void)getDataWithTenCentLocalWord:(NSString *)localWord andKeyWord:(NSString *)keyWord andPage:(NSInteger)page {
+    NSString *url = [NSString stringWithFormat:@"%@?keyword=%@&boundary=region(%@,0)&output=json&page=%ld&key=%@",TenCentApi,keyWord,localWord, (long)page, TenCentKEY];
+    NSString * encodedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes( kCFAllocatorDefault, (CFStringRef)url, NULL, NULL,  kCFStringEncodingUTF8 ));
+    AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
+    [manger GET:encodedString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [HSDataManger sharedHSDataManger].getDicData = responseObject;
+        [self.getDataDelegate getTenCentDataSuccess];
+        NSLog(@"%@",url);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [self.getDataDelegate getDataFaild];
+    }];
+    
 }
 @end
 

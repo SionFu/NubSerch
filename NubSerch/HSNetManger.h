@@ -10,9 +10,15 @@
 #import "AFNetworking.h"
 #define SITEURL @"https://restapi.amap.com/v3/place/text?"
 #define KEY @"3f46c75b796f1aca86908b25f18c2c5f"
+
+#define TenCentApi @"https://apis.map.qq.com/ws/place/v1/search"
+#define TenCentKEY @"E3FBZ-IEF3D-K2P42-PWZEJ-MYZWV-DJFL2"
+
+
 @protocol HSGetDataDelegate <NSObject>
 //获取网络数据
 - (void)getDataSuccess;
+- (void)getTenCentDataSuccess;
 - (void)getDataFaild;
 @end
 @interface HSNetManger : NSObject
@@ -22,4 +28,8 @@
  *  获取附件内容 文件
  */
 -(void)getDataWithLocalWord:(NSString *)localWord andKeyWord:(NSString *)keyWord andPage:(NSInteger)page;
+/**
+ *  腾讯地图接口获取数据
+ */
+-(void)getDataWithTenCentLocalWord:(NSString *)localWord andKeyWord:(NSString *)keyWord andPage:(NSInteger)page;
 @end

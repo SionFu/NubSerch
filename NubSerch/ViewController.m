@@ -9,6 +9,19 @@
 #import "ViewController.h"
 
 @implementation ViewController
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication
+                    hasVisibleWindows:(BOOL)flag{
+    if (flag) {
+        return NO;
+    }
+    else
+    {
+        [self.view.window makeKeyAndOrderFront:self];
+        return YES;
+    }
+    
+}
+
 -(NSArray *)fixDataArray {
     if (_fixDataArray == nil) {
         _fixDataArray = [NSMutableArray array];
@@ -30,6 +43,55 @@
     _NubTbleView.dataSource = self;
     self.netManger = [HSDataManger sharedHSDataManger].netManger;
     self.netManger.getDataDelegate = self;
+}
+- (void)getTenCentDataSuccess {
+    [self.dataArray addObjectsFromArray:[HSDataManger sharedHSDataManger].getDicData[@"data"]];
+    //判断字典中的数组和字符串
+    NSArray *lastDataArray = [NSArray arrayWithArray:[HSDataManger sharedHSDataManger].getDicData[@"data"]];
+    if (lastDataArray.count == 0) {
+        
+    }else {
+        [self loadMoreDeal];
+        
+    }
+    for (int i = 0; i < lastDataArray.count; i ++){
+        NSDictionary *dataDic = lastDataArray[i];
+        id tempObj = [dataDic objectForKey:@"tel"];
+        NSString *str = [NSString stringWithFormat:@"%@",[tempObj class]];
+        if ([str isEqualToString:@"__NSCFString"]) {
+            //            NSLog(@"%@",dataDic[@"tel"]);
+            NSString *telStr = [NSString stringWithFormat:@"%@",dataDic[@"tel"]];
+            if([telStr rangeOfString:@";"].location !=NSNotFound){
+                //如果电话字段内有多个电话号码
+                //                        NSRange range = [telStr rangeOfString:@";"];
+                NSString *telNum = [self segmentationStr:telStr];
+                NSLog(@"2:%@,返回分割电话\n%@",telStr,telNum);
+                //多个电话号码中有手机号码
+                if (![telNum isEqualToString:@""]) {
+                    /*不返回一个电话字段中有多个电话号码字段注释*/
+                    //                    [self.fixDataArray addObject:[NSNumber numberWithInt:i+self.listNub]];
+                }
+            }else {
+                //电话字段内只有一个号码
+                NSLog(@"1:%@",telStr);
+                if ([[self getTelFirstNubWithTelNub:telStr] isEqualToString:telStr]) {
+                    //add To ListArray
+                    [self.fixDataArray addObject:[NSNumber numberWithInt:i+self.listNub]];
+                }
+                
+            }
+        }
+        
+    }
+    self.listNub += (int)lastDataArray.count;
+    [self.NubTbleView reloadData];
+    //    [MBProgressHUD hideHUDForView:self.tableView animated:YES];
+    if (self.fixDataArray.count == 0) {
+        
+    }
+    //    NSLog(@"获取数据成功%@",self.fixDataArray);
+    //显示总共有多少条数据
+    self.nubOfData.stringValue = [NSString stringWithFormat:@"%lu",(unsigned long)self.fixDataArray.count];
 }
 -(void)getDataSuccess {
     [self.dataArray addObjectsFromArray:[HSDataManger sharedHSDataManger].getDicData[@"pois"]];
@@ -55,7 +117,8 @@
                 NSLog(@"2:%@,返回分割电话\n%@",telStr,telNum);
                 //多个电话号码中有手机号码
                 if (![telNum isEqualToString:@""]) {
-                    [self.fixDataArray addObject:[NSNumber numberWithInt:i+self.listNub]];
+                    /*不返回一个电话字段中有多个电话号码字段注释*/
+//                    [self.fixDataArray addObject:[NSNumber numberWithInt:i+self.listNub]];
                 }
             }else {
                 //电话字段内只有一个号码
@@ -83,15 +146,25 @@
 //以";"分割字符 并返回手机号码
 -(NSString *)segmentationStr:(NSString *)str
 {
-    NSArray *array = [str componentsSeparatedByString:@";"];
+    /*不返回号码中有";"注释*/
+//    NSArray *array = [str componentsSeparatedByString:@";"];
+    NSArray *array = [str componentsSeparatedByString:@""];
     NSMutableString *returnNum = [NSMutableString string];
     for (NSMutableString *telNum in array) {
         if ([self getTelFirstNubWithTelNub:telNum] == telNum){
-            returnNum = [NSMutableString stringWithFormat:@"%@;%@",telNum,returnNum];
+             /*不返回号码中有";"注释*/
+//            returnNum = [NSMutableString stringWithFormat:@"%@;%@",telNum,returnNum];
+            returnNum = [NSMutableString stringWithFormat:@"%@",telNum];
         }
     }
     return returnNum;
 }
+//选择查询接口类型
+- (IBAction)selectApiTypeButtonClick:(NSPopUpButton *)sender {
+    NSLog(@"%@",sender.selectedItem.title);
+}
+
+//是否为查看手机号码
 - (IBAction)phoneNubOnlyBtnClink:(NSButton *)sender {
     NSLog(@"%ld",(long)sender.state);
 }
@@ -137,8 +210,7 @@
 }
 - (void)loadMoreDeal {
     //将计数计数相加  数组也是相加
-    [self getDataWithPage:self.pageNub ++];
-    
+        [self getDataWithPage:self.pageNub ++];
 }
 -(void)getDataFaild {
     NSLog(@"获取数据失败");
@@ -159,7 +231,11 @@
     for (int i = 0 ; i < self.fixDataArray.count; i ++) {
         NSNumber *indexNum = self.fixDataArray[i];
         NSInteger indexTer = [indexNum intValue];
-        contentStr = [NSString stringWithFormat:@"%@ \n%@",contentStr,self.dataArray[indexTer][@"name"]];
+        if ([self.apiTypeSelect.title isEqualToString:@"高德地图"]) {
+             contentStr = [NSString stringWithFormat:@"%@ \n%@",contentStr,self.dataArray[indexTer][@"name"]];
+        }else if ([self.apiTypeSelect.title isEqualToString:@"腾讯地图"]){
+            contentStr  = [NSString stringWithFormat:@"%@ \n%@",contentStr,self.dataArray[indexTer][@"title"]];
+        }
         NSString *telStr = self.dataArray[indexTer][@"tel"];
         if (self.phoneNubOnly.state == 1) {
            contentStrNub = [NSString stringWithFormat:@"%@ \n%@",contentStrNub,[self segmentationStr:telStr]];
@@ -168,15 +244,23 @@
         }
 
     }
-    [self writeFileWithContent:contentStr AndFileName:[NSString stringWithFormat:@"%@-%@.txt",self.localLabel.stringValue,self.keyWordLabel.stringValue]];
-    [self writeFileWithContent:contentStrNub AndFileName:[NSString stringWithFormat:@"%@-%@-Nub.txt",self.localLabel.stringValue,self.keyWordLabel.stringValue]];
+    if ([self.apiTypeSelect.title isEqualToString:@"高德地图"]) {
+        [self writeFileWithContent:contentStr AndFileName:[NSString stringWithFormat:@"%@-%@-高德.txt",self.localLabel.stringValue,self.keyWordLabel.stringValue]];
+        [self writeFileWithContent:contentStrNub AndFileName:[NSString stringWithFormat:@"%@-%@-Nub-高德.txt",self.localLabel.stringValue,self.keyWordLabel.stringValue]];
+    }else if ([self.apiTypeSelect.title isEqualToString:@"腾讯地图"]){
+        [self writeFileWithContent:contentStr AndFileName:[NSString stringWithFormat:@"%@-%@-腾讯.txt",self.localLabel.stringValue,self.keyWordLabel.stringValue]];
+        [self writeFileWithContent:contentStrNub AndFileName:[NSString stringWithFormat:@"%@-%@-Nub-腾讯.txt",self.localLabel.stringValue,self.keyWordLabel.stringValue]];
+    }
     sender.title = @"已保存";
     sender.enabled = NO;
 }
 //获取数据
 - (void)getDataWithPage:(NSInteger)page {
-    [self.netManger getDataWithLocalWord:self.localLabel.stringValue andKeyWord:self.keyWordLabel.stringValue andPage:page];
-    
+    if ([self.apiTypeSelect.title isEqualToString:@"高德地图"]) {
+       [self.netManger getDataWithLocalWord:self.localLabel.stringValue andKeyWord:self.keyWordLabel.stringValue andPage:page];
+    }else if ([self.apiTypeSelect.title isEqualToString:@"腾讯地图"]){
+        [self.netManger getDataWithTenCentLocalWord:self.localLabel.stringValue andKeyWord:self.keyWordLabel.stringValue andPage:page];
+    }
 }
 
 //返回行数
@@ -195,7 +279,11 @@
     NSInteger indexTer = [indexNum intValue];
     // 1.1.判断是哪一列
     if ([tableColumn.identifier isEqualToString:@"nameCell"]) {
-        view.stringValue    = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"name"]];
+        if ([self.apiTypeSelect.title isEqualToString:@"高德地图"]) {
+           view.stringValue    = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"name"]];
+        }else if ([self.apiTypeSelect.title isEqualToString:@"腾讯地图"]){
+            view.stringValue    = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"title"]];
+        }
     }else if ([tableColumn.identifier isEqualToString:@"nubCell"]) {
         
         NSString *phoneNub = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"tel"]];
