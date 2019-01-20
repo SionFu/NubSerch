@@ -13,6 +13,19 @@
 @end
 
 @implementation AppDelegate
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication
+                    hasVisibleWindows:(BOOL)flag{
+    if (flag) {
+        return NO;
+    }
+    else
+    {
+        NSWindow *window = [[NSApplication sharedApplication].windows lastObject];
+        [window makeKeyAndOrderFront:self];
+        return YES;
+    }
+    
+}
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
