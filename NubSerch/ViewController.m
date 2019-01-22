@@ -49,10 +49,10 @@
     //判断字典中的数组和字符串
     NSArray *lastDataArray = [NSArray arrayWithArray:[HSDataManger sharedHSDataManger].getDicData[@"data"]];
     if (lastDataArray.count == 0) {
-        
+        self.apiTypeSelect.enabled = YES;
     }else {
         [self loadMoreDeal];
-        
+        self.apiTypeSelect.enabled = NO;
     }
     for (int i = 0; i < lastDataArray.count; i ++){
         NSDictionary *dataDic = lastDataArray[i];
@@ -98,10 +98,10 @@
     //判断字典中的数组和字符串
     NSArray *lastDataArray = [NSArray arrayWithArray:[HSDataManger sharedHSDataManger].getDicData[@"pois"]];
     if (lastDataArray.count == 0) {
-        
+         self.apiTypeSelect.enabled = YES;
     }else {
         [self loadMoreDeal];
-        
+         self.apiTypeSelect.enabled = NO;
     }
     for (int i = 0; i < lastDataArray.count; i ++){
         NSDictionary *dataDic = lastDataArray[i];
@@ -217,6 +217,8 @@
 }
 //点击搜索按钮
 - (IBAction)searchBtnClick:(NSButton *)sender {
+    //设置选择接口按钮失效，防止搜索过程中选择其他接口的bug
+    self.apiTypeSelect.enabled = NO;
     [self loadNewDeal];
     [self.NubTbleView reloadData];
     NSLog(@"%@%@",self.localLabel.stringValue,self.keyWordLabel.stringValue);
@@ -293,7 +295,16 @@
         }
          view.stringValue = phoneNub;
         
-    }else {
+    }else if ([tableColumn.identifier isEqualToString:@"addCell"]) {
+        
+        if ([self.apiTypeSelect.title isEqualToString:@"高德地图"]) {
+            view.stringValue    = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"address"]];
+        }else if ([self.apiTypeSelect.title isEqualToString:@"腾讯地图"]){
+            view.stringValue    = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"address"]];
+        }
+        
+    }
+    else {
         view.stringValue    = [NSString stringWithFormat:@"不知道哪列的第%ld个Cell",row + 1];
     }
     return view;
