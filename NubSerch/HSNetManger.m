@@ -28,7 +28,7 @@
     }];
 }
 -(void)getDataWithTenCentLocalWord:(NSString *)localWord andKeyWord:(NSString *)keyWord andPage:(NSInteger)page {
-    NSString *url = [NSString stringWithFormat:@"%@keyword=%@&boundary=region(%@,0)&output=json&page=%ld&key=%@",TenCentApi,keyWord,localWord, (long)page, TenCentKEY];
+    NSString *url = [NSString stringWithFormat:@"%@keyword=%@&boundary=region(%@,0)&output=json&page_index=%ld&key=%@",TenCentApi,keyWord,localWord, (long)page, TenCentKEY];
     NSString * encodedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes( kCFAllocatorDefault, (CFStringRef)url, NULL, NULL,  kCFStringEncodingUTF8 ));
     AFHTTPRequestOperationManager *manger = [AFHTTPRequestOperationManager manager];
     [manger GET:encodedString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {

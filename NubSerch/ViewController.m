@@ -43,7 +43,7 @@
     _NubTbleView.dataSource = self;
     self.netManger = [HSDataManger sharedHSDataManger].netManger;
     self.netManger.getDataDelegate = self;
-    self.versionField.stringValue = [NSString stringWithFormat:@"%@(%@)",[[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleShortVersionString"],[[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleVersion"]] ;
+    self.versionField.stringValue = [NSString stringWithFormat:@"%@ (%@)",[[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleShortVersionString"],[[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleVersion"]] ;
 }
 -(void)getBaiDuDataSuccess {
     [self.dataArray addObjectsFromArray:[HSDataManger sharedHSDataManger].getDicData[@"results"]];
