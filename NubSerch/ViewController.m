@@ -43,6 +43,56 @@
     _NubTbleView.dataSource = self;
     self.netManger = [HSDataManger sharedHSDataManger].netManger;
     self.netManger.getDataDelegate = self;
+    self.versionField.stringValue = [NSString stringWithFormat:@"%@(%@)",[[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleShortVersionString"],[[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleVersion"]] ;
+}
+-(void)getBaiDuDataSuccess {
+    [self.dataArray addObjectsFromArray:[HSDataManger sharedHSDataManger].getDicData[@"results"]];
+    //判断字典中的数组和字符串
+    NSArray *lastDataArray = [NSArray arrayWithArray:[HSDataManger sharedHSDataManger].getDicData[@"results"]];
+    if (lastDataArray.count == 0) {
+        self.apiTypeSelect.enabled = YES;
+    }else {
+        [self loadMoreDeal];
+        self.apiTypeSelect.enabled = NO;
+    }
+    for (int i = 0; i < lastDataArray.count; i ++){
+        NSDictionary *dataDic = lastDataArray[i];
+        id tempObj = [dataDic objectForKey:@"telephone"];
+        NSString *str = [NSString stringWithFormat:@"%@",[tempObj class]];
+        if ([str isEqualToString:@"__NSCFString"]) {
+            //            NSLog(@"%@",dataDic[@"tel"]);
+            NSString *telStr = [NSString stringWithFormat:@"%@",dataDic[@"telephone"]];
+            if([telStr rangeOfString:@";"].location !=NSNotFound){
+                //如果电话字段内有多个电话号码
+                //                        NSRange range = [telStr rangeOfString:@";"];
+                NSString *telNum = [self segmentationStr:telStr];
+                NSLog(@"2:%@,返回分割电话\n%@",telStr,telNum);
+                //多个电话号码中有手机号码
+                if (![telNum isEqualToString:@""]) {
+                    /*不返回一个电话字段中有多个电话号码字段注释*/
+                    //                    [self.fixDataArray addObject:[NSNumber numberWithInt:i+self.listNub]];
+                }
+            }else {
+                //电话字段内只有一个号码
+                NSLog(@"1:%@",telStr);
+                if ([[self getTelFirstNubWithTelNub:telStr] isEqualToString:telStr]) {
+                    //add To ListArray
+                    [self.fixDataArray addObject:[NSNumber numberWithInt:i+self.listNub]];
+                }
+                
+            }
+        }
+        
+    }
+    self.listNub += (int)lastDataArray.count;
+    [self.NubTbleView reloadData];
+    //    [MBProgressHUD hideHUDForView:self.tableView animated:YES];
+    if (self.fixDataArray.count == 0) {
+        
+    }
+    //    NSLog(@"获取数据成功%@",self.fixDataArray);
+    //显示总共有多少条数据
+    self.nubOfData.stringValue = [NSString stringWithFormat:@"%lu",(unsigned long)self.fixDataArray.count];
 }
 - (void)getTenCentDataSuccess {
     [self.dataArray addObjectsFromArray:[HSDataManger sharedHSDataManger].getDicData[@"data"]];
@@ -235,15 +285,30 @@
         NSInteger indexTer = [indexNum intValue];
         if ([self.apiTypeSelect.title isEqualToString:@"高德地图"]) {
              contentStr = [NSString stringWithFormat:@"%@ \n%@",contentStr,self.dataArray[indexTer][@"name"]];
+            NSString *telStr = self.dataArray[indexTer][@"tel"];
+            if (self.phoneNubOnly.state == 1) {
+                contentStrNub = [NSString stringWithFormat:@"%@ \n%@",contentStrNub,[self segmentationStr:telStr]];
+            }else {
+                contentStrNub = [NSString stringWithFormat:@"%@ \n%@",contentStrNub,telStr];
+            }
         }else if ([self.apiTypeSelect.title isEqualToString:@"腾讯地图"]){
             contentStr  = [NSString stringWithFormat:@"%@ \n%@",contentStr,self.dataArray[indexTer][@"title"]];
+            NSString *telStr = self.dataArray[indexTer][@"tel"];
+            if (self.phoneNubOnly.state == 1) {
+                contentStrNub = [NSString stringWithFormat:@"%@ \n%@",contentStrNub,[self segmentationStr:telStr]];
+            }else {
+                contentStrNub = [NSString stringWithFormat:@"%@ \n%@",contentStrNub,telStr];
+            }
+        }else if ([self.apiTypeSelect.title isEqualToString:@"百度地图"]){
+            contentStr  = [NSString stringWithFormat:@"%@ \n%@",contentStr,self.dataArray[indexTer][@"name"]];
+            NSString *telStr = self.dataArray[indexTer][@"telephone"];
+            if (self.phoneNubOnly.state == 1) {
+                contentStrNub = [NSString stringWithFormat:@"%@ \n%@",contentStrNub,[self segmentationStr:telStr]];
+            }else {
+                contentStrNub = [NSString stringWithFormat:@"%@ \n%@",contentStrNub,telStr];
+            }
         }
-        NSString *telStr = self.dataArray[indexTer][@"tel"];
-        if (self.phoneNubOnly.state == 1) {
-           contentStrNub = [NSString stringWithFormat:@"%@ \n%@",contentStrNub,[self segmentationStr:telStr]];
-        }else {
-            contentStrNub = [NSString stringWithFormat:@"%@ \n%@",contentStrNub,telStr];
-        }
+        
 
     }
     if ([self.apiTypeSelect.title isEqualToString:@"高德地图"]) {
@@ -252,6 +317,9 @@
     }else if ([self.apiTypeSelect.title isEqualToString:@"腾讯地图"]){
         [self writeFileWithContent:contentStr AndFileName:[NSString stringWithFormat:@"%@-%@-腾讯.txt",self.localLabel.stringValue,self.keyWordLabel.stringValue]];
         [self writeFileWithContent:contentStrNub AndFileName:[NSString stringWithFormat:@"%@-%@-Nub-腾讯.txt",self.localLabel.stringValue,self.keyWordLabel.stringValue]];
+    }else if ([self.apiTypeSelect.title isEqualToString:@"百度地图"]){
+        [self writeFileWithContent:contentStr AndFileName:[NSString stringWithFormat:@"%@-%@-百度.txt",self.localLabel.stringValue,self.keyWordLabel.stringValue]];
+        [self writeFileWithContent:contentStrNub AndFileName:[NSString stringWithFormat:@"%@-%@-Nub-百度.txt",self.localLabel.stringValue,self.keyWordLabel.stringValue]];
     }
     sender.title = @"已保存";
     sender.enabled = NO;
@@ -262,6 +330,8 @@
        [self.netManger getDataWithLocalWord:self.localLabel.stringValue andKeyWord:self.keyWordLabel.stringValue andPage:page];
     }else if ([self.apiTypeSelect.title isEqualToString:@"腾讯地图"]){
         [self.netManger getDataWithTenCentLocalWord:self.localLabel.stringValue andKeyWord:self.keyWordLabel.stringValue andPage:page];
+    }else if ([self.apiTypeSelect.title isEqualToString:@"百度地图"]){
+        [self.netManger getDataWithBaiDuLocalWord:self.localLabel.stringValue andKeyWord:self.keyWordLabel.stringValue andPage:page];
     }
 }
 
@@ -285,21 +355,42 @@
            view.stringValue    = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"name"]];
         }else if ([self.apiTypeSelect.title isEqualToString:@"腾讯地图"]){
             view.stringValue    = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"title"]];
+        }else if ([self.apiTypeSelect.title isEqualToString:@"百度地图"]){
+            view.stringValue    = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"name"]];
         }
     }else if ([tableColumn.identifier isEqualToString:@"nubCell"]) {
-        
-        NSString *phoneNub = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"tel"]];
-       
-        if (self.phoneNubOnly.state == 1) {
-           phoneNub =  [self segmentationStr:phoneNub];
+        if ([self.apiTypeSelect.title isEqualToString:@"高德地图"]) {
+            NSString *phoneNub = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"tel"]];
+            
+            if (self.phoneNubOnly.state == 1) {
+                phoneNub =  [self segmentationStr:phoneNub];
+            }
+            view.stringValue = phoneNub;
+        }else if ([self.apiTypeSelect.title isEqualToString:@"腾讯地图"]){
+            NSString *phoneNub = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"tel"]];
+            
+            if (self.phoneNubOnly.state == 1) {
+                phoneNub =  [self segmentationStr:phoneNub];
+            }
+            view.stringValue = phoneNub;
+        }else if ([self.apiTypeSelect.title isEqualToString:@"百度地图"]){
+            NSString *phoneNub = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"telephone"]];
+            
+            if (self.phoneNubOnly.state == 1) {
+                phoneNub =  [self segmentationStr:phoneNub];
+            }
+            view.stringValue = phoneNub;
         }
-         view.stringValue = phoneNub;
+        
+        
         
     }else if ([tableColumn.identifier isEqualToString:@"addCell"]) {
         
         if ([self.apiTypeSelect.title isEqualToString:@"高德地图"]) {
             view.stringValue    = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"address"]];
         }else if ([self.apiTypeSelect.title isEqualToString:@"腾讯地图"]){
+            view.stringValue    = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"address"]];
+        }else if ([self.apiTypeSelect.title isEqualToString:@"百度地图"]){
             view.stringValue    = [NSString stringWithFormat:@"%@",self.dataArray[indexTer][@"address"]];
         }
         

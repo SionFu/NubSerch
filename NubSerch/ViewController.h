@@ -27,7 +27,10 @@
 @property (weak) IBOutlet NSTextField *nubOfData;
 //是否值显示手机号码内容
 @property (weak) IBOutlet NSButton *phoneNubOnly;
+//选择接口
 @property (weak) IBOutlet NSPopUpButton *apiTypeSelect;
+//显示版本信息
+@property (weak) IBOutlet NSTextField *versionField;
 
 @end
 

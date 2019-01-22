@@ -722,7 +722,7 @@
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JM9-5t-HlD">
                                 <rect key="frame" x="85" y="247" width="96" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="书店" placeholderString="酒店" drawsBackground="YES" id="qVb-XQ-V1d">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" title="书店" placeholderString="书店" drawsBackground="YES" id="qVb-XQ-V1d">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -889,6 +889,15 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KQf-LK-CcP">
+                                <rect key="frame" x="7" y="8" width="44" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="版本：" id="w7p-za-lhT">
+                                    <font key="font" size="13" name=".PingFangSC-Regular"/>
+                                    <color key="textColor" red="0.40000000600000002" green="0.40000000600000002" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iiG-cF-ERv">
                                 <rect key="frame" x="64" y="59" width="56" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -926,8 +935,9 @@
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="vb4-E7-RbH">
                                         <items>
-                                            <menuItem title="高德地图" state="on" id="HfZ-uu-dKV"/>
-                                            <menuItem title="腾讯地图" id="efK-eF-fcO"/>
+                                            <menuItem title="高德地图" state="on" keyEquivalent="1" id="HfZ-uu-dKV"/>
+                                            <menuItem title="腾讯地图" keyEquivalent="2" id="efK-eF-fcO"/>
+                                            <menuItem title="百度地图" keyEquivalent="3" id="0WX-Cg-WIz"/>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
@@ -941,6 +951,15 @@
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="选择接口：" id="YUS-Su-FQ0">
                                     <font key="font" size="13" name=".PingFangSC-Regular"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V7Y-79-ygj">
+                                <rect key="frame" x="43" y="7" width="56" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="0" id="AQG-P2-oRp">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" red="0.40000000600000002" green="0.40000000600000002" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
@@ -960,6 +979,7 @@
                         <outlet property="nubOfData" destination="iiG-cF-ERv" id="r0D-0B-4X9"/>
                         <outlet property="phoneNubOnly" destination="ybd-ra-H7m" id="kDR-RU-sBz"/>
                         <outlet property="saveBtn" destination="Lcy-Qn-pn6" id="ipK-jC-Txk"/>
+                        <outlet property="versionField" destination="V7Y-79-ygj" id="4pO-CR-56T"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
