@@ -7,7 +7,8 @@
 //
 
 #import "ViewController.h"
-
+#import "AVOSCloud.h"
+#import "FGetIPAddress.h"
 @implementation ViewController
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication
                     hasVisibleWindows:(BOOL)flag{
@@ -43,6 +44,7 @@
     _NubTbleView.dataSource = self;
     self.netManger = [HSDataManger sharedHSDataManger].netManger;
     self.netManger.getDataDelegate = self;
+    //版本信息
     self.versionField.stringValue = [NSString stringWithFormat:@"%@ (%@)",[[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleShortVersionString"],[[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleVersion"]] ;
 }
 -(void)getBaiDuDataSuccess {
@@ -66,7 +68,7 @@
                 //如果电话字段内有多个电话号码
                 //                        NSRange range = [telStr rangeOfString:@";"];
                 NSString *telNum = [self segmentationStr:telStr];
-                NSLog(@"2:%@,返回分割电话\n%@",telStr,telNum);
+//                NSLog(@"2:%@,返回分割电话\n%@",telStr,telNum);
                 //多个电话号码中有手机号码
                 if (![telNum isEqualToString:@""]) {
                     /*不返回一个电话字段中有多个电话号码字段注释*/
@@ -115,7 +117,7 @@
                 //如果电话字段内有多个电话号码
                 //                        NSRange range = [telStr rangeOfString:@";"];
                 NSString *telNum = [self segmentationStr:telStr];
-                NSLog(@"2:%@,返回分割电话\n%@",telStr,telNum);
+//                NSLog(@"2:%@,返回分割电话\n%@",telStr,telNum);
                 //多个电话号码中有手机号码
                 if (![telNum isEqualToString:@""]) {
                     /*不返回一个电话字段中有多个电话号码字段注释*/
@@ -123,7 +125,7 @@
                 }
             }else {
                 //电话字段内只有一个号码
-                NSLog(@"1:%@",telStr);
+//                NSLog(@"1:%@",telStr);
                 if ([[self getTelFirstNubWithTelNub:telStr] isEqualToString:telStr]) {
                     //add To ListArray
                     [self.fixDataArray addObject:[NSNumber numberWithInt:i+self.listNub]];
@@ -164,7 +166,7 @@
                 //如果电话字段内有多个电话号码
                 //                        NSRange range = [telStr rangeOfString:@";"];
                 NSString *telNum = [self segmentationStr:telStr];
-                NSLog(@"2:%@,返回分割电话\n%@",telStr,telNum);
+//                NSLog(@"2:%@,返回分割电话\n%@",telStr,telNum);
                 //多个电话号码中有手机号码
                 if (![telNum isEqualToString:@""]) {
                     /*不返回一个电话字段中有多个电话号码字段注释*/
@@ -172,7 +174,7 @@
                 }
             }else {
                 //电话字段内只有一个号码
-                NSLog(@"1:%@",telStr);
+//                NSLog(@"1:%@",telStr);
                 if ([[self getTelFirstNubWithTelNub:telStr] isEqualToString:telStr]) {
                     //add To ListArray
                     [self.fixDataArray addObject:[NSNumber numberWithInt:i+self.listNub]];
@@ -267,14 +269,107 @@
 }
 //点击搜索按钮
 - (IBAction)searchBtnClick:(NSButton *)sender {
-    //设置选择接口按钮失效，防止搜索过程中选择其他接口的bug
-    self.apiTypeSelect.enabled = NO;
-    [self loadNewDeal];
-    [self.NubTbleView reloadData];
-    NSLog(@"%@%@",self.localLabel.stringValue,self.keyWordLabel.stringValue);
-    [self getDataWithPage:1];
-    self.saveBtn.title = @"保存";
-    self.saveBtn.enabled = YES;
+    AVUser *currentUser = [AVUser currentUser];
+     AVQuery *query = [AVQuery queryWithClassName:@"_User"];
+    [query getObjectInBackgroundWithId:@"5c6d50aaa91c93004abe2997" block:^(AVObject * _Nullable object, NSError * _Nullable error) {
+        NSString *salt = [object objectForKey:@"salt"];
+        if (salt) {
+            NSAlert *alert = [[NSAlert alloc]init];
+            [alert setMessageText:@"欢迎王八蛋和狗使用"];
+            [alert setInformativeText:@"我是王八蛋和狗==>继续使用？"];
+            [alert addButtonWithTitle:@"好的"];
+            [alert beginSheetModalForWindow:self.view.window
+                          completionHandler:^(NSModalResponse returnCode){
+                          }];
+        }
+    }];
+//    NSAlert *alert = [[NSAlert alloc]init];
+//    [alert setMessageText:@"欢迎王八蛋和狗使用"];
+//    [alert setInformativeText:@"我是王八蛋和狗==>继续使用？"];
+//    [alert addButtonWithTitle:@"好的"];
+//    [alert beginSheetModalForWindow:self.view.window
+//                  completionHandler:^(NSModalResponse returnCode){
+                      //用户点击告警上面的按钮后的回调
+                      //设置选择接口按钮失效，防止搜索过程中选择其他接口的bug
+                      self.apiTypeSelect.enabled = NO;
+                      [self loadNewDeal];
+                      [self.NubTbleView reloadData];
+                      NSLog(@"%@%@",self.localLabel.stringValue,self.keyWordLabel.stringValue);
+                      [self getDataWithPage:1];
+                      self.saveBtn.title = @"保存";
+                      self.saveBtn.enabled = YES;
+                      AVObject *testObject = [AVObject objectWithClassName:@"TestObject"];
+                      [testObject setObject:self.apiTypeSelect.title forKey:@"search"];
+                      [testObject setObject:self.localLabel.stringValue forKey:@"place"];
+                      [testObject setObject:self.keyWordLabel.stringValue forKey:@"keyWord"];
+                      [testObject setObject:[self getMacAddress] forKey:@"userMacAdd"];
+                      [testObject setObject:[self getIPAddress] forKey:@"userIP"];
+                      [testObject setObject:[[[FGetIPAddress alloc]init]getUserIPAddressAndLocation] forKey:@"IP"];
+                      [testObject setObject:self.versionField.stringValue forKey:@"version"];
+                      [testObject save];
+//                  }
+//     ];
+
+    
+    
+       
+}
+#pragma mark - Another way to get the device IP address
+- (NSString *)getIPAddress {
+    
+    char ipAddress[16];
+    
+    if ([self getIPAddressCommandResult:ipAddress] == -1) {
+        NSLog(@"获取IP地址失败");
+    }
+    
+    return [NSString stringWithUTF8String:ipAddress];
+}
+
+- (int)getIPAddressCommandResult:(char *)result {
+    
+    char buffer[16];
+    FILE* pipe = popen("ifconfig en0 | grep inet' ' | cut -d' ' -f 2", "r");
+    if (!pipe)
+        return -1;
+    while(!feof(pipe)) {
+        if(fgets(buffer, 1024, pipe)){
+            //strcat(result, buffer);
+            strncpy(result, buffer, sizeof(buffer) - 1);
+            result[sizeof(buffer) - 1] = '\0';
+        }
+    }
+    pclose(pipe);
+    return 0;
+}
+
+#pragma mark - Another way to get the device MAC address
+- (NSString *)getMacAddress {
+    
+    char macAddress[18];
+    
+    if ([self getMACAddressCommandResult:macAddress] == -1) {
+        NSLog(@"获取MAC地址失败");
+    }
+    
+    return [NSString stringWithUTF8String:macAddress];
+}
+
+- (int)getMACAddressCommandResult:(char *)result {
+    
+    char buffer[18];
+    FILE* pipe = popen("ifconfig en0 | grep ether | cut -d' ' -f 2", "r");
+    if (!pipe)
+        return -1;
+    while(!feof(pipe)) {
+        if(fgets(buffer, 1024, pipe)){
+            //strcat(result, buffer);
+            strncpy(result, buffer, sizeof(buffer) - 1);
+            result[sizeof(buffer) - 1] = '\0';
+        }
+    }
+    pclose(pipe);
+    return 0;
 }
 //点击保存按钮
 - (IBAction)saveBtnClick:(NSButton *)sender {

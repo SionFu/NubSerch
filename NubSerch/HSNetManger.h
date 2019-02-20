@@ -10,13 +10,18 @@
 #import "AFNetworking.h"
 //高德接口
 #define SITEURL @"https://restapi.amap.com/v3/place/text?"
-#define KEY @"3f46c75b796f1aca86908b25f18c2c5f"
+//#define KEY @"3f46c75b796f1aca86908b25f18c2c5f"
+
+#define KEY @"e5b2dee220082632bca652331ca89496"
 //腾讯接口
 #define TenCentApi @"https://apis.map.qq.com/ws/place/v1/search?"
-#define TenCentKEY @"E3FBZ-IEF3D-K2P42-PWZEJ-MYZWV-DJFL2"
+//#define TenCentKEY @"E3FBZ-IEF3D-K2P42-PWZEJ-MYZWV-DJFL2"
+#define TenCentKEY @"RY4BZ-SWLCU-XZ7VT-B3POM-SEN36-JXBJC"
+
 //百度接口
 #define BiaduApi @"https://api.map.baidu.com/place/v2/search?"
-#define BiaduKEY @"clZ8KNbp57z41BRCVjgvxyK98ew111Ao"
+//#define BiaduKEY @"clZ8KNbp57z41BRCVjgvxyK98ew111Ao"
+#define BiaduKEY @"eGxPFmqY3zV62g6oWXBg2USHPtqduzGb"
 
 @protocol HSGetDataDelegate <NSObject>
 //获取网络数据
