@@ -47,6 +47,68 @@
     //版本信息
     self.versionField.stringValue = [NSString stringWithFormat:@"%@ (%@)",[[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleShortVersionString"],[[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleVersion"]] ;
 }
+//获取用户位置
+//开始定位
+- (void)startLocation {
+    if ([CLLocationManager locationServicesEnabled]) {
+        //        CLog(@"--------开始定位");
+        self.locationManager = [[CLLocationManager alloc]init];
+        self.locationManager.delegate = self;
+        //控制定位精度,越高耗电量越
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
+        // 总是授权
+//        [self.locationManager requestAlwaysAuthorization];
+        self.locationManager.distanceFilter = 10.0f;
+//        [self.locationManager requestAlwaysAuthorization];
+        [self.locationManager startUpdatingLocation];
+    }
+}
+
+//- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+//    if ([error code] == kCLErrorDenied) {
+//        CLog(@"访问被拒绝");
+//    }
+//    if ([error code] == kCLErrorLocationUnknown) {
+//        CLog(@"无法获取位置信息");
+//    }
+//}
+//定位代理经纬度回调
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {
+    CLLocation *newLocation = locations[0];
+    // 获取当前所在的城市名
+    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+    //根据经纬度反向地理编译出地址信息
+    [geocoder reverseGeocodeLocation:newLocation completionHandler:^(NSArray *array, NSError *error){
+        if (array.count > 0){
+            CLPlacemark *placemark = [array objectAtIndex:0];
+
+            //获取城市
+            NSString *city = placemark.locality;
+            [city stringByAppendingString:placemark.thoroughfare];
+            if (!city) {
+                //四大直辖市的城市信息无法通过locality获得，只能通过获取省份的方法来获得（如果city为空，则可知为直辖市）
+                city = placemark.administrativeArea;
+            }
+            NSLog(@"city = %@", city);
+            //保存当前的经纬度到数据库 
+            AVUser *cuser = [AVUser currentUser];
+            [cuser setObject:[NSString stringWithFormat:@"%@",placemark] forKey:@"locations"];
+            [cuser save];
+//            [self httpGetWeather:city];
+        }
+        else if (error == nil && [array count] == 0)
+        {
+            NSLog(@"No results were returned.");
+        }
+        else if (error != nil)
+        {
+            NSLog(@"An error occurred = %@", error);
+        }
+    }];
+    //系统会一直更新数据，直到选择停止更新，因为我们只需要获得一次经纬度即可，所以获取之后就停止更新
+    [manager stopUpdatingLocation];
+
+}
 -(void)getBaiDuDataSuccess {
     [self.dataArray addObjectsFromArray:[HSDataManger sharedHSDataManger].getDicData[@"results"]];
     //判断字典中的数组和字符串
@@ -236,10 +298,21 @@
     }
     
 }
+- (NSString *)getDownLoadspath {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSUserDomainMask, YES);
+    NSString *path = paths.firstObject;
+    return path;
+}
 - (NSString *)getDocumentsPath {
     //获取DocumentsPath路径
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES);
     NSString *path = [paths.firstObject stringByAppendingPathComponent:@"Nub"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+   //当文件夹不存在的时候创建一个文件夹
+    if (![fm fileExistsAtPath:path]) {
+        //创建文件夹
+        [fm createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:nil];
+    }
     return path;
 }
 - (void)writeFileWithContent:(NSString *)contents AndFileName:(NSString *)fileName {
@@ -269,50 +342,88 @@
 }
 //点击搜索按钮
 - (IBAction)searchBtnClick:(NSButton *)sender {
+    
     AVUser *currentUser = [AVUser currentUser];
      AVQuery *query = [AVQuery queryWithClassName:@"_User"];
-    [query getObjectInBackgroundWithId:@"5c6d50aaa91c93004abe2997" block:^(AVObject * _Nullable object, NSError * _Nullable error) {
-        NSString *salt = [object objectForKey:@"salt"];
-        if (salt) {
-            NSAlert *alert = [[NSAlert alloc]init];
-            [alert setMessageText:@"欢迎王八蛋和狗使用"];
-            [alert setInformativeText:@"我是王八蛋和狗==>继续使用？"];
-            [alert addButtonWithTitle:@"好的"];
+    [query getObjectInBackgroundWithId:currentUser.objectId block:^(AVObject * _Nullable object, NSError * _Nullable error) {
+        NSString *update = [object objectForKey:@"update"];
+        NSAlert *alert = [[NSAlert alloc]init];
+        if ([object objectForKey:@"MessageText"]) {
+            [alert setMessageText:[object objectForKey:@"MessageText"]];
+            [alert setInformativeText:[object objectForKey:@"InformativeText"]];
+            [alert addButtonWithTitle:[object objectForKey:@"Title"]];
+            [alert setAlertStyle:0];
+        }
+        if ([object objectForKey:@"imageUrl"]) {
+            NSImage *image = [self getImageWithUrl:[object objectForKey:@"imageUrl"]];
+            [alert setIcon:image];
+        }
+        if ([update isEqualToString:@"1"]) {
+            //只提醒一次信息
+            static dispatch_once_t onceTaken;
+            dispatch_once(&onceTaken, ^{
+                [alert beginSheetModalForWindow:self.view.window
+                              completionHandler:^(NSModalResponse returnCode){
+                                  //获取用户位置信息
+                                  [self startLocation];
+                              }];
+            });
+            [self searchDate];
+        }else if([update isEqualToString:@"2"]){
+            //每次显示信息
+            
             [alert beginSheetModalForWindow:self.view.window
                           completionHandler:^(NSModalResponse returnCode){
+                              [self searchDate];
                           }];
+        
+            
+        }else if([update isEqualToString:@"3"]){
+            //升级
+            [alert beginSheetModalForWindow:self.view.window
+                          completionHandler:^(NSModalResponse returnCode){
+                              //升级
+                          }];
+            
+        }
+        else if ([update isEqualToString:@"0"]){
+            //不可使用
+            [alert beginSheetModalForWindow:self.view.window
+                          completionHandler:^(NSModalResponse returnCode){
+                              //
+                          }];
+        }else {
+            [self searchDate];
         }
     }];
-//    NSAlert *alert = [[NSAlert alloc]init];
-//    [alert setMessageText:@"欢迎王八蛋和狗使用"];
-//    [alert setInformativeText:@"我是王八蛋和狗==>继续使用？"];
-//    [alert addButtonWithTitle:@"好的"];
-//    [alert beginSheetModalForWindow:self.view.window
-//                  completionHandler:^(NSModalResponse returnCode){
-                      //用户点击告警上面的按钮后的回调
-                      //设置选择接口按钮失效，防止搜索过程中选择其他接口的bug
-                      self.apiTypeSelect.enabled = NO;
-                      [self loadNewDeal];
-                      [self.NubTbleView reloadData];
-                      NSLog(@"%@%@",self.localLabel.stringValue,self.keyWordLabel.stringValue);
-                      [self getDataWithPage:1];
-                      self.saveBtn.title = @"保存";
-                      self.saveBtn.enabled = YES;
-                      AVObject *testObject = [AVObject objectWithClassName:@"TestObject"];
-                      [testObject setObject:self.apiTypeSelect.title forKey:@"search"];
-                      [testObject setObject:self.localLabel.stringValue forKey:@"place"];
-                      [testObject setObject:self.keyWordLabel.stringValue forKey:@"keyWord"];
-                      [testObject setObject:[self getMacAddress] forKey:@"userMacAdd"];
-                      [testObject setObject:[self getIPAddress] forKey:@"userIP"];
-                      [testObject setObject:[[[FGetIPAddress alloc]init]getUserIPAddressAndLocation] forKey:@"IP"];
-                      [testObject setObject:self.versionField.stringValue forKey:@"version"];
-                      [testObject save];
-//                  }
-//     ];
-
+}
+//下载新版本
+- (void)downLoadNewVersionWithUrl:(NSString *)url {
     
-    
-       
+}
+//获取支付二维码
+- (NSImage * )getImageWithUrl:(NSString *)url {
+    NSData *imagedata = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+    NSImage *image = [[NSImage alloc]initWithData:imagedata];
+    return image;
+}
+- (void)searchDate {
+    self.apiTypeSelect.enabled = NO;
+    [self loadNewDeal];
+    [self.NubTbleView reloadData];
+    NSLog(@"%@%@",self.localLabel.stringValue,self.keyWordLabel.stringValue);
+    [self getDataWithPage:1];
+    self.saveBtn.title = @"保存";
+    self.saveBtn.enabled = YES;
+    AVObject *testObject = [AVObject objectWithClassName:@"TestObject"];
+    [testObject setObject:self.apiTypeSelect.title forKey:@"search"];
+    [testObject setObject:self.localLabel.stringValue forKey:@"place"];
+    [testObject setObject:self.keyWordLabel.stringValue forKey:@"keyWord"];
+    [testObject setObject:[self getMacAddress] forKey:@"userMacAdd"];
+    [testObject setObject:[self getIPAddress] forKey:@"userIP"];
+    [testObject setObject:[[[FGetIPAddress alloc]init]getUserIPAddressAndLocation] forKey:@"IP"];
+    [testObject setObject:self.versionField.stringValue forKey:@"version"];
+    [testObject save];
 }
 #pragma mark - Another way to get the device IP address
 - (NSString *)getIPAddress {

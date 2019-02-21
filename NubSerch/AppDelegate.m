@@ -44,9 +44,9 @@
                     [self saveUserData];
                 } else {
                     NSLog(@"已有登陆数据%@",user);
-                     AVObject *version = [AVObject objectWithClassName:@"NewVersion"];
-                    [version setObject:user forKey:@"owner"];
-                    [version save];
+//                     AVObject *version = [AVObject objectWithClassName:@"NewVersion"];
+//                    [version setObject:user forKey:@"owner"];
+//                    [version save];
                 }
             }];
         }
