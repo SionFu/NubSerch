@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "AVOSCloud.h"
 #import "FGetIPAddress.h"
+
 @implementation ViewController
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication
                     hasVisibleWindows:(BOOL)flag{
@@ -299,8 +300,8 @@
     
 }
 - (NSString *)getDownLoadspath {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSUserDomainMask, YES);
-    NSString *path = paths.firstObject;
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES);
+    NSString *path = [paths.firstObject stringByAppendingPathComponent:@"NubSearch.dmg"];
     return path;
 }
 - (NSString *)getDocumentsPath {
@@ -375,6 +376,8 @@
             [alert beginSheetModalForWindow:self.view.window
                           completionHandler:^(NSModalResponse returnCode){
                               [self searchDate];
+                              //获取用户位置信息
+                              [self startLocation];
                           }];
         
             
@@ -383,6 +386,8 @@
             [alert beginSheetModalForWindow:self.view.window
                           completionHandler:^(NSModalResponse returnCode){
                               //升级
+                              NSString *updateUrl = [object objectForKey:@"updateURL"];
+                              [self downLoadNewVersionWithUrl:updateUrl];
                           }];
             
         }
@@ -399,7 +404,31 @@
 }
 //下载新版本
 - (void)downLoadNewVersionWithUrl:(NSString *)url {
-    
+//     [NSTask launchedTaskWithLaunchPath:[self getDownLoadspath] arguments:nil];
+    NSData *newVersion = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+    NSString *downloadPath = [self getDownLoadspath];
+    BOOL isCreate = [newVersion writeToFile:downloadPath atomically:YES];
+    if (isCreate) {
+        NSLog(@"创建成功");
+         dispatch_async(dispatch_get_main_queue(), ^{
+//             NSTask *softTask = [[NSTask alloc]init];
+//             [softTask setLaunchPath:[self getDownLoadspath]];
+            
+//             [softTask setArguments:[NSArray arrayWithObjects:@"hello world", "2016", nil]];
+//             [softTask launch];
+         });
+        
+        
+        NSError * error;
+        //            [string writeToFile:myFiled atomically:YES encoding:NSUTF8StringEncoding error:&error];
+        
+        if (error) {
+            NSLog(@"save error:%@",error.description);
+        }
+    }
+    else{
+        NSLog(@"🌺 创建失败");
+    }
 }
 //获取支付二维码
 - (NSImage * )getImageWithUrl:(NSString *)url {

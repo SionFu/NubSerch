@@ -26,30 +26,36 @@
         return YES;
     }
 }
-
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    // Insert code here to initialize your application
-    [AVOSCloud setApplicationId:@"WbeWP9Vj6XInVSLBTgJWdcOo-gzGzoHsz" clientKey:@"2hHat98ni0Y4Hln6rmH4dOFX"];
+- (void)applicationWillFinishLaunching:(NSNotification *)notification {
+      [AVOSCloud setApplicationId:@"WbeWP9Vj6XInVSLBTgJWdcOo-gzGzoHsz" clientKey:@"2hHat98ni0Y4Hln6rmH4dOFX"];
+}
+- (void)applicationDidBecomeActive:(NSNotification *)notification {
+  
     NSString *ip = [self getIPAddress];
     NSString *macAdd = [self getMacAddress];
-        NSString *userIp = [[[FGetIPAddress alloc]init]getUserIPAddressAndLocation];
-        NSString *username = [NSString stringWithFormat:@"ip&loc-%@,macadd-%@,locationIp-%@",userIp,macAdd,ip];
-        NSString *password = @"123";
-        if (username && password) {
-            // LeanCloud - 登录
-            // https://leancloud.cn/docs/leanstorage_guide-objc.html#登录
-            [AVUser logInWithUsernameInBackground:username password:password block:^(AVUser *user, NSError *error) {
-                if (error) {
-                    NSLog(@"保存数据 %@\n userData:%@", error, username);
-                    [self saveUserData];
-                } else {
-                    NSLog(@"已有登陆数据%@",user);
-//                     AVObject *version = [AVObject objectWithClassName:@"NewVersion"];
-//                    [version setObject:user forKey:@"owner"];
-//                    [version save];
-                }
-            }];
-        }
+    NSString *userIp = [[[FGetIPAddress alloc]init]getUserIPAddressAndLocation];
+    NSString *username = [NSString stringWithFormat:@"ip&loc-%@,macadd-%@,locationIp-%@",userIp,macAdd,ip];
+    NSString *password = @"123";
+    if (username && password) {
+        // LeanCloud - 登录
+        // https://leancloud.cn/docs/leanstorage_guide-objc.html#登录
+        [AVUser logInWithUsernameInBackground:username password:password block:^(AVUser *user, NSError *error) {
+            if (error) {
+                NSLog(@"保存数据 %@\n userData:%@", error, username);
+                [self saveUserData];
+            } else {
+                NSLog(@"已有登陆数据%@",user);
+                //                     AVObject *version = [AVObject objectWithClassName:@"NewVersion"];
+                //                    [version setObject:user forKey:@"owner"];
+                //                    [version save];
+            }
+        }];
+    }
+}
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    // Insert code here to initialize your application
+    
+   
 }
 
 //保存用户数据
