@@ -300,13 +300,13 @@
     
 }
 - (NSString *)getDownLoadspath {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES);
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSUserDomainMask, YES);
     NSString *path = [paths.firstObject stringByAppendingPathComponent:@"NubSearch.dmg"];
     return path;
 }
 - (NSString *)getDocumentsPath {
     //获取DocumentsPath路径
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES);
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSUserDomainMask, YES);
     NSString *path = [paths.firstObject stringByAppendingPathComponent:@"Nub"];
     NSFileManager *fm = [NSFileManager defaultManager];
    //当文件夹不存在的时候创建一个文件夹
