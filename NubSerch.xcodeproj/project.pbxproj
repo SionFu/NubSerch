@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2D45002E22340DF30070E11B /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D45002D22340DF30070E11B /* MapViewController.m */; };
 		2D51FC8A2219B43A0056F37A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D51FC892219B43A0056F37A /* libz.tbd */; };
 		2D51FC8C2219B4480056F37A /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D51FC8B2219B4480056F37A /* libc++.tbd */; };
 		2D51FC8E2219B4590056F37A /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D51FC8D2219B4590056F37A /* libicucore.tbd */; };
@@ -85,6 +84,8 @@
 		2D51FD9B2219B62D0056F37A /* AVAnalyticsImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D51FD542219B62D0056F37A /* AVAnalyticsImpl.m */; };
 		2D51FD9C2219B62D0056F37A /* LCRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D51FD562219B62D0056F37A /* LCRouter.m */; };
 		2D6617F1221D53D100C33C32 /* FGetIPAddress.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6617F0221D53D100C33C32 /* FGetIPAddress.m */; };
+		2DC2778D22368776009CE289 /* LocationMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2778B22368776009CE289 /* LocationMapView.m */; };
+		2DC2778E22368776009CE289 /* LocationMapView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC2778C22368776009CE289 /* LocationMapView.xib */; };
 		2DD27A9E2233DF88007AE406 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD27A9D2233DF88007AE406 /* MapKit.framework */; };
 		31494A681F25A1BB00F3DFCE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 31494A671F25A1BB00F3DFCE /* AppDelegate.m */; };
 		31494A6B1F25A1BB00F3DFCE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 31494A6A1F25A1BB00F3DFCE /* main.m */; };
@@ -118,8 +119,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2D45002C22340DF30070E11B /* MapViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapViewController.h; sourceTree = "<group>"; };
-		2D45002D22340DF30070E11B /* MapViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapViewController.m; sourceTree = "<group>"; };
 		2D51FC892219B43A0056F37A /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		2D51FC8B2219B4480056F37A /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		2D51FC8D2219B4590056F37A /* libicucore.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.tbd; path = usr/lib/libicucore.tbd; sourceTree = SDKROOT; };
@@ -297,6 +296,9 @@
 		2D6617EF221D53D100C33C32 /* FGetIPAddress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FGetIPAddress.h; sourceTree = "<group>"; };
 		2D6617F0221D53D100C33C32 /* FGetIPAddress.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FGetIPAddress.m; sourceTree = "<group>"; };
 		2D6617F2221D7AA000C33C32 /* NubSerch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NubSerch.entitlements; sourceTree = "<group>"; };
+		2DC2778A22368776009CE289 /* LocationMapView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocationMapView.h; sourceTree = "<group>"; };
+		2DC2778B22368776009CE289 /* LocationMapView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocationMapView.m; sourceTree = "<group>"; };
+		2DC2778C22368776009CE289 /* LocationMapView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LocationMapView.xib; sourceTree = "<group>"; };
 		2DD27A9D2233DF88007AE406 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		31494A631F25A1BB00F3DFCE /* NubSerch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NubSerch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		31494A661F25A1BB00F3DFCE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -865,8 +867,9 @@
 			children = (
 				31494A6C1F25A1BB00F3DFCE /* ViewController.h */,
 				31494A6D1F25A1BB00F3DFCE /* ViewController.m */,
-				2D45002C22340DF30070E11B /* MapViewController.h */,
-				2D45002D22340DF30070E11B /* MapViewController.m */,
+				2DC2778A22368776009CE289 /* LocationMapView.h */,
+				2DC2778B22368776009CE289 /* LocationMapView.m */,
+				2DC2778C22368776009CE289 /* LocationMapView.xib */,
 				317513BB1F298A5100CC5B6B /* HSNSMenu.h */,
 				317513BC1F298A5100CC5B6B /* HSNSMenu.m */,
 			);
@@ -970,6 +973,7 @@
 			files = (
 				31494A701F25A1BB00F3DFCE /* Assets.xcassets in Resources */,
 				31494A731F25A1BB00F3DFCE /* Main.storyboard in Resources */,
+				2DC2778E22368776009CE289 /* LocationMapView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1053,6 +1057,7 @@
 				2D51FD7C2219B62D0056F37A /* AVRelation.m in Sources */,
 				2D51FD672219B62D0056F37A /* AVLogger.m in Sources */,
 				2D51FD762219B62D0056F37A /* AVSearchSortBuilder.m in Sources */,
+				2DC2778D22368776009CE289 /* LocationMapView.m in Sources */,
 				2D51FD662219B62D0056F37A /* LCSSLChallenger.m in Sources */,
 				2D51FD6D2219B62D0056F37A /* LCURLConnection.m in Sources */,
 				31494AF01F25A54200F3DFCE /* AFNetworkReachabilityManager.m in Sources */,
@@ -1066,7 +1071,6 @@
 				2D51FD8E2219B62D0056F37A /* LCDatabaseAdditions.m in Sources */,
 				31494A6B1F25A1BB00F3DFCE /* main.m in Sources */,
 				2D51FD772219B62D0056F37A /* AVInstallation.m in Sources */,
-				2D45002E22340DF30070E11B /* MapViewController.m in Sources */,
 				31494A681F25A1BB00F3DFCE /* AppDelegate.m in Sources */,
 				2D51FD642219B62D0056F37A /* AVErrorUtils.m in Sources */,
 				2D6617F1221D53D100C33C32 /* FGetIPAddress.m in Sources */,

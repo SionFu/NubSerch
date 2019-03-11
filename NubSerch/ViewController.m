@@ -9,9 +9,10 @@
 #import "ViewController.h"
 #import "AVOSCloud.h"
 #import "FGetIPAddress.h"
-#import "MapViewController.h"
+//#import "MapViewController.h"
+#import "LocationMapView.h"
 @interface ViewController()
-@property (nonatomic, strong)MapViewController *mapView;
+@property (nonatomic, strong)LocationMapView *mapView;
 @end
 @implementation ViewController
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication
@@ -26,9 +27,9 @@
     }
     
 }
--(MapViewController *)mapView {
+-(LocationMapView *)mapView {
     if (_mapView == nil) {
-        _mapView = [[MapViewController alloc]init];
+        _mapView = [[LocationMapView alloc]init];
     }return  _mapView;
 }
 -(NSArray *)fixDataArray {
@@ -46,6 +47,7 @@
         _pageNub = 2;
     }return _pageNub;
 }
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     _NubTbleView.delegate = self;
@@ -58,7 +60,35 @@
 //获取用户选择的行
 - (void)tableViewSelectionDidChange:(NSNotification *)notification {
     NSLog(@"%@",_NubTbleView.selectedRowIndexes);
-    
+    [_NubTbleView.selectedRowIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+        NSLog(@"%lu", (unsigned long)idx);
+        NSNumber *indexNum = self.fixDataArray[(unsigned long)idx];
+        NSInteger indexTer = [indexNum intValue];
+        NSString *locationStr;
+        NSLog(@"=======\n%@",self.dataArray[indexTer]);
+        if ([self.apiTypeSelect.title isEqualToString:@"高德地图"]) {
+            locationStr = self.dataArray[indexTer][@"location"];
+        }else if ([self.apiTypeSelect.title isEqualToString:@"腾讯地图"]){
+            NSString *latitude = self.dataArray[indexTer][@"location"][@"lat"];
+            NSString *longitude = self.dataArray[indexTer][@"location"][@"lng"];
+            locationStr = [NSString stringWithFormat:@"%@,%@",longitude,latitude];
+        }else if ([self.apiTypeSelect.title isEqualToString:@"百度地图"]){
+            NSString *latitude = self.dataArray[indexTer][@"location"][@"lat"];
+            NSString *longitude = self.dataArray[indexTer][@"location"][@"lng"];
+            locationStr = [NSString stringWithFormat:@"%@,%@",longitude,latitude];
+        }
+        
+        
+        NSRange range = [locationStr rangeOfString:@","];
+        NSString *latitude = [locationStr substringToIndex:range.location];
+        NSString *longitude = [locationStr substringFromIndex:range.location+1];
+        self.mapView.longitude = [latitude floatValue];
+        self.mapView.latitude = [longitude floatValue];
+    }];
+     [self presentViewControllerAsSheet:self.mapView];
+//       [self presentViewController:self.mapView asPopoverRelativeToRect:NSMakeRect(300, 0, 200, 200) ofView:self.NubTbleView preferredEdge:NSRectEdgeMinX behavior:NSPopoverBehaviorTransient];
+//    self.mapView.latitude = self.fixDataArray[];
+   
 }
 
 //获取用户位置
@@ -356,7 +386,6 @@
 }
 //点击搜索按钮
 - (IBAction)searchBtnClick:(NSButton *)sender {
-    
     AVUser *currentUser = [AVUser currentUser];
      AVQuery *query = [AVQuery queryWithClassName:@"_User"];
     [query getObjectInBackgroundWithId:currentUser.objectId block:^(AVObject * _Nullable object, NSError * _Nullable error) {

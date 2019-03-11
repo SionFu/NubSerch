@@ -20,11 +20,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NubSerch/ViewController.m"
-            timestampString = "573986813.447811"
+            timestampString = "574008804.1680911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "581"
-            endingLineNumber = "581"
+            startingLineNumber = "609"
+            endingLineNumber = "609"
             landmarkName = "-tableView:toolTipForCell:rect:tableColumn:row:mouseLocation:"
             landmarkType = "7">
          </BreakpointContent>
@@ -36,11 +36,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NubSerch/ViewController.m"
-            timestampString = "573986813.448507"
+            timestampString = "574008804.1695679"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "585"
-            endingLineNumber = "585"
+            startingLineNumber = "613"
+            endingLineNumber = "613"
             landmarkName = "-tableView:shouldShowCellExpansionForTableColumn:row:"
             landmarkType = "7">
          </BreakpointContent>
@@ -52,11 +52,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "NubSerch/ViewController.m"
-            timestampString = "573986813.449018"
+            timestampString = "574008804.1708831"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "592"
-            endingLineNumber = "592"
+            startingLineNumber = "620"
+            endingLineNumber = "620"
             landmarkName = "-tableView:shouldTrackCell:forTableColumn:row:"
             landmarkType = "7">
          </BreakpointContent>
