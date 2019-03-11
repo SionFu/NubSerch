@@ -9,7 +9,10 @@
 #import "ViewController.h"
 #import "AVOSCloud.h"
 #import "FGetIPAddress.h"
-
+#import "MapViewController.h"
+@interface ViewController()
+@property (nonatomic, strong)MapViewController *mapView;
+@end
 @implementation ViewController
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication
                     hasVisibleWindows:(BOOL)flag{
@@ -23,7 +26,11 @@
     }
     
 }
-
+-(MapViewController *)mapView {
+    if (_mapView == nil) {
+        _mapView = [[MapViewController alloc]init];
+    }return  _mapView;
+}
 -(NSArray *)fixDataArray {
     if (_fixDataArray == nil) {
         _fixDataArray = [NSMutableArray array];
@@ -48,6 +55,12 @@
     //版本信息
     self.versionField.stringValue = [NSString stringWithFormat:@"%@ (%@)",[[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleShortVersionString"],[[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleVersion"]] ;
 }
+//获取用户选择的行
+- (void)tableViewSelectionDidChange:(NSNotification *)notification {
+    NSLog(@"%@",_NubTbleView.selectedRowIndexes);
+    
+}
+
 //获取用户位置
 //开始定位
 - (void)startLocation {
@@ -559,6 +572,25 @@
     sender.title = @"已保存";
     sender.enabled = NO;
 }
+//设置是否可以进行编辑
+- (BOOL)tableView:(NSTableView *)tableView shouldEditTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row{
+    return NO;
+}
+//设置鼠标悬停在cell上显示的提示文本
+- (NSString *)tableView:(NSTableView *)tableView toolTipForCell:(NSCell *)cell rect:(NSRectPointer)rect tableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row mouseLocation:(NSPoint)mouseLocation{
+    return @"tip";
+}
+//当列表长度无法展示完整某行数据时 当鼠标悬停在此行上 是否扩展显示
+- (BOOL)tableView:(NSTableView *)tableView shouldShowCellExpansionForTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row{
+    return YES;
+}
+//设置cell的交互能力
+/*
+ 如果返回YES，则Cell的交互能力会变强，例如NSButtonCell的点击将会调用- (void)tableView:(NSTableView *)tableView setObjectValue方法
+ */
+- (BOOL)tableView:(NSTableView *)tableView shouldTrackCell:(NSCell *)cell forTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row{
+    return YES;
+}
 //获取数据
 - (void)getDataWithPage:(NSInteger)page {
     if ([self.apiTypeSelect.title isEqualToString:@"高德地图"]) {
@@ -636,8 +668,9 @@
     return view;
     
 }
-
-
+- (void)selectRowIndexes:(NSIndexSet *)indexes byExtendingSelection:(BOOL)extend {
+    NSLog(@"%@",indexes);
+}
 - (void)setRepresentedObject:(id)representedObject {
     [super setRepresentedObject:representedObject];
 

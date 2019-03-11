@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "HSNetManger.h"
 #import "HSDataManger.h"
-#import <CoreLocation/CoreLocation.h>
+#import <CoreLocation/CoreLocation.h> 
 @interface ViewController : NSViewController<HSGetDataDelegate,NSTableViewDelegate,NSTableViewDataSource,CLLocationManagerDelegate>
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (weak) IBOutlet NSTextField *localLabel;

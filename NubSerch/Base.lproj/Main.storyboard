@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
+        <plugIn identifier="com.apple.MapKitIBPlugin" version="14113"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -127,9 +128,14 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="窗口" systemMenu="window" id="Td7-aD-5lo">
                                     <items>
-                                        <menuItem title="最小化" keyEquivalent="m" id="OY7-WF-poV">
+                                        <menuItem title="关闭" keyEquivalent="w" id="OY7-WF-poV">
                                             <connections>
-                                                <action selector="performMiniaturize:" target="Ady-hI-5gd" id="VwT-WD-YPe"/>
+                                                <action selector="performClose:" target="Ady-hI-5gd" id="6TU-oE-PRN"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="最小化" keyEquivalent="m" id="Ght-mj-Ilo">
+                                            <connections>
+                                                <action selector="performMiniaturize:" target="Ady-hI-5gd" id="2Tc-fZ-js3"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="缩放" id="R4o-n2-Eq4">
@@ -259,6 +265,7 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="saveBtnClick:" target="XfG-lQ-9wD" id="BmA-cg-Puu"/>
+                                    <segue destination="Bk5-NL-Lvq" kind="popover" popoverAnchorView="Lcy-Qn-pn6" popoverBehavior="t" preferredEdge="maxY" id="KQS-17-gNV"/>
                                 </connections>
                             </button>
                             <scrollView wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JGg-Xs-VM4">
@@ -499,6 +506,25 @@
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="130" y="927"/>
+        </scene>
+        <!--商家位置-->
+        <scene sceneID="rip-Zm-zYT">
+            <objects>
+                <viewController title="商家位置" id="Bk5-NL-Lvq" customClass="MapViewController" sceneMemberID="viewController">
+                    <view key="view" id="pBj-gY-awt">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <mapView fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="8j9-3J-ajK">
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </mapView>
+                        </subviews>
+                    </view>
+                </viewController>
+                <customObject id="Mxy-Qd-tVG" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="129" y="1491"/>
         </scene>
     </scenes>
 </document>
