@@ -77,15 +77,13 @@
             NSString *longitude = self.dataArray[indexTer][@"location"][@"lng"];
             locationStr = [NSString stringWithFormat:@"%@,%@",longitude,latitude];
         }
-        
-        
         NSRange range = [locationStr rangeOfString:@","];
         NSString *latitude = [locationStr substringToIndex:range.location];
         NSString *longitude = [locationStr substringFromIndex:range.location+1];
         self.mapView.longitude = [latitude floatValue];
         self.mapView.latitude = [longitude floatValue];
     }];
-     [self presentViewControllerAsSheet:self.mapView];
+//     [self presentViewControllerAsSheet:self.mapView];
 //       [self presentViewController:self.mapView asPopoverRelativeToRect:NSMakeRect(300, 0, 200, 200) ofView:self.NubTbleView preferredEdge:NSRectEdgeMinX behavior:NSPopoverBehaviorTransient];
 //    self.mapView.latitude = self.fixDataArray[];
    
@@ -386,6 +384,21 @@
 }
 //点击搜索按钮
 - (IBAction)searchBtnClick:(NSButton *)sender {
+    //判断是否输入内容
+    if ([self.localLabel.stringValue isEqualToString:@""]) {
+        //请输入地区信息
+        NSAlert *alert = [NSAlert alertWithMessageText:@"温馨提示" defaultButton:@"好" alternateButton:nil otherButton:nil informativeTextWithFormat:@"请输入地区信息！"];
+        [self.localLabel becomeFirstResponder];
+        [alert runModal];
+        return;
+    }else if ([self.keyWordLabel.stringValue isEqualToString:@""]) {
+        //请输入搜索关键字
+        NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:121 userInfo:@{NSLocalizedDescriptionKey:@"请输入关键字！"}];
+        NSAlert *alert = [NSAlert alertWithError:error];
+        [self.keyWordLabel becomeFirstResponder];
+        [alert runModal];
+        return;
+    }
     AVUser *currentUser = [AVUser currentUser];
      AVQuery *query = [AVQuery queryWithClassName:@"_User"];
     [query getObjectInBackgroundWithId:currentUser.objectId block:^(AVObject * _Nullable object, NSError * _Nullable error) {
@@ -400,6 +413,7 @@
         if ([object objectForKey:@"imageUrl"]) {
             NSImage *image = [self getImageWithUrl:[object objectForKey:@"imageUrl"]];
             [alert setIcon:image];
+            
         }
         if ([update isEqualToString:@"1"]) {
             //只提醒一次信息
@@ -441,6 +455,7 @@
                           }];
         }else {
             [self searchDate];
+            [self startLocation];
         }
     }];
 }
